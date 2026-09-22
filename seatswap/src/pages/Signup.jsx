@@ -2,14 +2,14 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Input from "../components/Input";
 import Button from "../components/Button";
-
+import api from "../services/api";
 function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
   e.preventDefault();
 
   setError("");
@@ -28,10 +28,17 @@ function Signup() {
     setError("Password must be at least 6 characters");
     return;
   }
+try {
+  const response = await api.post("/auth/signup", {
+    name,
+    email,
+    password,
+  });
 
-  console.log("Name:", name);
-  console.log("Email:", email);
-  console.log("Password:", password);
+  console.log(response.data);
+} catch (error) {
+  console.log(error.response?.data || "Signup failed");
+}
 };
 
   return (
