@@ -39,8 +39,9 @@ const createRequest = async (req, res) => {
 const getMyRequests = async (req, res) => {
   try {
     const requests = await ExchangeRequest.find({
-      userId: req.userId,
-    }).sort({ createdAt: -1 });
+  userId: req.userId,
+  status: "open",
+}).sort({ createdAt: -1 });
 
     res.status(200).json({
       requests,
@@ -52,4 +53,42 @@ const getMyRequests = async (req, res) => {
   }
 };
 
-module.exports = { createRequest, getMyRequests };
+const cancelRequest = async (req, res) => {
+  try {
+    const request = await ExchangeRequest.findOne({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+
+    if (!request) {
+      return res.status(404).json({
+        message: "Request not found",
+      });
+    }
+
+    if (request.status !== "open") {
+      return res.status(400).json({
+        message: "Only open requests can be cancelled",
+      });
+    }
+
+    request.status = "cancelled";
+
+    await request.save();
+
+    res.status(200).json({
+      message: "Request cancelled successfully",
+      request,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+
+module.exports = {
+  createRequest,
+  getMyRequests,
+  cancelRequest,
+};

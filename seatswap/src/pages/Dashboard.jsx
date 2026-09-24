@@ -7,10 +7,28 @@ function Dashboard() {
 
   const [requests, setRequests] = useState([]);
 
+  const handleCancel = async (requestId) => {
+    try {
+      const response = await api.patch(`/requests/${requestId}`);
+
+      console.log(response.data);
+
+      setRequests((prevRequests) =>
+  prevRequests.filter((request) => request._id !== requestId)
+);
+    } catch (error) {
+      console.log(
+        error.response?.data || "Failed to cancel request"
+      );
+    }
+  };
+
   useEffect(() => {
     const getRequests = async () => {
       try {
         const response = await api.get("/requests");
+
+        
 
         setRequests(response.data.requests);
       } catch (error) {
@@ -127,6 +145,15 @@ function Dashboard() {
                       {request.message}
                     </p>
                   </div>
+                )}
+
+                {request.status === "open" && (
+                  <button
+                    onClick={() => handleCancel(request._id)}
+                    className="mt-5 bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition"
+                  >
+                    Cancel Request
+                  </button>
                 )}
 
               </div>
