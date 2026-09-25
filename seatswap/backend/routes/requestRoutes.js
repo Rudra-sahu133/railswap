@@ -3,13 +3,14 @@ const {
   createRequest,
   getMyRequests,
   cancelRequest,
+  searchRequests,
 } = require("../controllers/requestController");
 const authMiddleware = require("../middleware/authMiddleware");
-
 const router = express.Router();
 
 router.post("/", authMiddleware, createRequest);
 router.get("/", authMiddleware, getMyRequests);
+router.get("/search", authMiddleware, searchRequests);
 router.patch("/:id", authMiddleware, cancelRequest);
 
 module.exports = router;

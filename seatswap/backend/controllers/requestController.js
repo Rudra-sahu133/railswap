@@ -52,6 +52,39 @@ const getMyRequests = async (req, res) => {
     });
   }
 };
+const searchRequests = async (req, res) => {
+  try {
+    const { trainNumber, journeyDate, coach } = req.query;
+
+    const filter = {
+      status: "open",
+      userId: { $ne: req.userId },
+    };
+
+    if (trainNumber) {
+      filter.trainNumber = trainNumber;
+    }
+
+    if (journeyDate) {
+      filter.journeyDate = journeyDate;
+    }
+
+    if (coach) {
+      filter.coach = coach;
+    }
+
+    const requests = await ExchangeRequest.find(filter)
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      requests,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
 
 const cancelRequest = async (req, res) => {
   try {
@@ -91,4 +124,5 @@ module.exports = {
   createRequest,
   getMyRequests,
   cancelRequest,
+  searchRequests,
 };
