@@ -1,4 +1,5 @@
 const ExchangeRequest = require("../models/ExchangeRequest");
+const isMatch = require("../utils/matching");
 
 const createRequest = async (req, res) => {
   try {
@@ -25,9 +26,40 @@ const createRequest = async (req, res) => {
       message,
     });
 
+    const otherRequests = await ExchangeRequest.find({
+  userId: { $ne: req.userId },
+  status: "open",
+  trainNumber,
+  journeyDate,
+});
+
+
+    let matchedRequest = null;
+
+    for (const otherRequest of otherRequests) {
+      if (isMatch(request, otherRequest)) {
+        matchedRequest = otherRequest;
+        break;
+      }
+    }
+
+    if (matchedRequest) {
+      request.status = "matched";
+      request.matchedRequestId = matchedRequest._id;
+
+      matchedRequest.status = "matched";
+      matchedRequest.matchedRequestId = request._id;
+
+      await request.save();
+      await matchedRequest.save();
+    }
+
     res.status(201).json({
-      message: "Exchange request created successfully",
+      message: matchedRequest
+        ? "Exchange request created and matched successfully"
+        : "Exchange request created successfully",
       request,
+      matchedRequest,
     });
   } catch (error) {
     res.status(500).json({

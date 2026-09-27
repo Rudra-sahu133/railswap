@@ -12,32 +12,37 @@ function CreateRequest() {
   const [desiredSeat, setDesiredSeat] = useState("");
   const [desiredSeatType, setDesiredSeatType] = useState("");
   const [message, setMessage] = useState("");
-
+  const [matchFound, setMatchFound] = useState(false);
+  const [matchedRequest, setMatchedRequest] = useState(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-  const response = await api.post("/requests", {
-    trainNumber,
-    journeyDate,
-    coach,
-    currentSeat,
-    currentSeatType,
-    desiredSeat,
-    desiredSeatType,
-    message,
-  });
+      const response = await api.post("/requests", {
+        trainNumber,
+        journeyDate,
+        coach,
+        currentSeat,
+        currentSeatType,
+        desiredSeat,
+        desiredSeatType,
+        message,
+      });
 
-  console.log(response.data);
-} catch (error) {
-  console.log(error.response?.data || "Request creation failed");
+      
+      
+      if (response.data.matchedRequest) {
+  setMatchFound(true);
+  setMatchedRequest(response.data.matchedRequest);
 }
+    } catch (error) {
+      console.log(error.response?.data || "Request creation failed");
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-lg p-8">
-
         <h1 className="text-3xl font-bold text-gray-900 text-center">
           Create Exchange Request 🚆
         </h1>
@@ -45,9 +50,30 @@ function CreateRequest() {
         <p className="text-gray-500 text-center mt-2 mb-8">
           Tell other passengers which seat you want to exchange
         </p>
+        {matchFound && matchedRequest && (
+  <div className="bg-green-100 border border-green-300 text-green-800 rounded-lg p-4 mb-6">
+    <h2 className="font-bold text-lg mb-2">
+      🎯 Match Found!
+    </h2>
 
+    <p>
+      Another passenger has the seat you want.
+    </p>
+
+    <div className="mt-3">
+      <p>
+        <strong>Current Seat:</strong>{" "}
+        {matchedRequest.currentSeat} ({matchedRequest.currentSeatType})
+      </p>
+
+      <p>
+        <strong>Desired Seat:</strong>{" "}
+        {matchedRequest.desiredSeat} ({matchedRequest.desiredSeatType})
+      </p>
+    </div>
+  </div>
+)}
         <form onSubmit={handleSubmit} className="space-y-5">
-
           <Input
             label="Train Number"
             type="text"
@@ -117,10 +143,7 @@ function CreateRequest() {
             />
           </div>
 
-          <Button type="submit">
-            Create Request
-          </Button>
-
+          <Button type="submit">Create Request</Button>
         </form>
       </div>
     </div>
