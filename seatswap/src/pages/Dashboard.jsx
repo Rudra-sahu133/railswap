@@ -56,12 +56,21 @@ function Dashboard() {
             </p>
           </div>
 
-          <button
-            onClick={() => navigate("/create-request")}
-            className="bg-blue-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
-          >
-            + Create Request
-          </button>
+          <div className="flex gap-3">
+  <button
+    onClick={() => navigate("/create-request")}
+    className="bg-blue-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+  >
+    + Create Request
+  </button>
+
+  <button
+    onClick={() => navigate("/appeals")}
+    className="bg-purple-600 text-white px-5 py-3 rounded-lg font-semibold hover:bg-purple-700 transition"
+  >
+    📩 Appeals
+  </button>
+</div>
         </div>
 
         {requests.length === 0 ? (
@@ -148,13 +157,25 @@ function Dashboard() {
                 )}
 
                 {request.status === "open" && (
-                  <button
-                    onClick={() => handleCancel(request._id)}
-                    className="mt-5 bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition"
-                  >
-                    Cancel Request
-                  </button>
-                )}
+  <button
+    onClick={() => handleCancel(request._id)}
+    className="mt-5 bg-red-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-700 transition"
+  >
+    Cancel Request
+  </button>
+)}
+
+{request.status === "matched" && (
+  <div className="mt-5 bg-blue-100 text-blue-800 px-4 py-3 rounded-lg font-semibold">
+    🎯 Request Matched
+  </div>
+)}
+
+{request.status === "completed" && (
+  <div className="mt-5 bg-green-100 text-green-800 px-4 py-3 rounded-lg font-semibold">
+    ✅ Exchange Completed
+  </div>
+)}
 
               </div>
             ))}
