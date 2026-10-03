@@ -12,6 +12,17 @@ const createAppeal = async (req, res) => {
         message: "Exchange request not found",
       });
     }
+    if (request.userId.toString() === req.userId.toString()) {
+  return res.status(400).json({
+    message: "You cannot send an appeal to your own request",
+  });
+}
+
+if (!message || !message.trim()) {
+  return res.status(400).json({
+    message: "Appeal message is required",
+  });
+}
     if (request.status === "completed") {
   return res.status(400).json({
     message: "This exchange request has already been completed",

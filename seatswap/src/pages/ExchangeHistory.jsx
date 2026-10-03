@@ -1,32 +1,32 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
 
-function Matches() {
-  const [matches, setMatches] = useState([]);
+function ExchangeHistory() {
+  const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchMatches = async () => {
+    const fetchHistory = async () => {
       try {
-        const response = await api.get("/requests/matches");
+        const response = await api.get("/requests/history");
 
-        setMatches(response.data.matches);
+        setHistory(response.data.requests);
       } catch (error) {
         console.log(
-          error.response?.data || "Failed to fetch matches"
+          error.response?.data || "Failed to fetch exchange history"
         );
       } finally {
         setLoading(false);
       }
     };
 
-    fetchMatches();
+    fetchHistory();
   }, []);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <p className="text-gray-600">Loading matches...</p>
+        <p className="text-gray-600">Loading exchange history...</p>
       </div>
     );
   }
@@ -36,47 +36,47 @@ function Matches() {
       <div className="max-w-4xl mx-auto">
 
         <h1 className="text-3xl font-bold text-gray-900 text-center">
-          Your Matches 🎯
+          Exchange History 📜
         </h1>
 
         <p className="text-gray-500 text-center mt-2 mb-8">
-          Requests that match your seat exchange requirements
+          View your completed seat exchanges
         </p>
 
-        {matches.length === 0 ? (
+        {history.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
             <p className="text-gray-500">
-              No matches found yet.
+              No completed exchanges yet.
             </p>
           </div>
         ) : (
           <div className="space-y-5">
-            {matches.map((match) => (
+            {history.map((request) => (
               <div
-                key={match._id}
+                key={request._id}
                 className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6"
               >
                 <div className="flex justify-between items-start gap-4">
 
                   <div>
                     <h2 className="text-xl font-bold text-gray-900">
-                      Train {match.trainNumber}
+                      Train {request.trainNumber}
                     </h2>
 
                     <p className="text-gray-600 mt-2">
                       Journey Date:{" "}
                       {new Date(
-                        match.journeyDate
+                        request.journeyDate
                       ).toLocaleDateString()}
                     </p>
 
                     <p className="text-gray-600">
-                      Coach: {match.coach}
+                      Coach: {request.coach}
                     </p>
                   </div>
 
                   <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
-                    Matched
+                    Completed
                   </span>
 
                 </div>
@@ -85,42 +85,42 @@ function Matches() {
 
                   <div className="bg-gray-50 rounded-lg p-4">
                     <p className="text-sm text-gray-500">
-                      Other Passenger's Seat
+                      Your Original Seat
                     </p>
 
                     <p className="text-lg font-semibold text-gray-900">
-                      {match.currentSeat}
+                      {request.currentSeat}
                     </p>
 
                     <p className="text-sm text-gray-600">
-                      {match.currentSeatType}
+                      {request.currentSeatType}
                     </p>
                   </div>
 
                   <div className="bg-gray-50 rounded-lg p-4">
                     <p className="text-sm text-gray-500">
-                      Seat They Want
+                      Requested Seat
                     </p>
 
                     <p className="text-lg font-semibold text-gray-900">
-                      {match.desiredSeat}
+                      {request.desiredSeat}
                     </p>
 
                     <p className="text-sm text-gray-600">
-                      {match.desiredSeatType}
+                      {request.desiredSeatType}
                     </p>
                   </div>
 
                 </div>
 
-                {match.message && (
+                {request.message && (
                   <div className="mt-5 border-t pt-4">
                     <p className="text-sm text-gray-500">
-                      Message
+                      Original Request Message
                     </p>
 
                     <p className="text-gray-700 mt-1">
-                      {match.message}
+                      {request.message}
                     </p>
                   </div>
                 )}
@@ -135,4 +135,4 @@ function Matches() {
   );
 }
 
-export default Matches;
+export default ExchangeHistory;

@@ -7,6 +7,7 @@ import CreateRequest from "./pages/CreateRequest";
 import Matches from "./pages/Matches";
 import SearchRequests from "./pages/SearchRequests";
 import ReceivedAppeals from "./pages/ReceivedAppeals";
+import ExchangeHistory from "./pages/ExchangeHistory";
 function App() {
   return (
     <BrowserRouter>
@@ -18,6 +19,7 @@ function App() {
         <Route path="/matches" element={<Matches />} />
         <Route path="/search-requests" element={<SearchRequests />} />
         <Route path="/appeals" element={<ReceivedAppeals />} />
+        <Route path="/history" element={<ExchangeHistory />} />
       </Routes>
     </BrowserRouter>
   );

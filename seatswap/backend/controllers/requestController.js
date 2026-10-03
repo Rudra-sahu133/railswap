@@ -151,10 +151,56 @@ const cancelRequest = async (req, res) => {
     });
   }
 };
+const getMatches = async (req, res) => {
+  try {
+    const myRequests = await ExchangeRequest.find({
+      userId: req.userId,
+      matchedRequestId: { $ne: null },
+    });
+
+    const matches = [];
+
+    for (const request of myRequests) {
+      const matchedRequest = await ExchangeRequest.findById(
+        request.matchedRequestId
+      );
+
+      if (matchedRequest) {
+        matches.push(matchedRequest);
+      }
+    }
+
+    res.status(200).json({
+      matches,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+const getHistory = async (req, res) => {
+  try {
+    const requests = await ExchangeRequest.find({
+      userId: req.userId,
+      status: "completed",
+    }).sort({ updatedAt: -1 });
+
+    res.status(200).json({
+      requests,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
 
 module.exports = {
   createRequest,
   getMyRequests,
   cancelRequest,
   searchRequests,
+  getMatches,
+  getHistory,
 };
